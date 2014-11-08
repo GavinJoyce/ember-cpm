@@ -9,7 +9,12 @@ var MyType = Ember.Object.extend({
   g: allEqual('a'),
   h: allEqual('a', 'c', 6),
   i: allEqual(Ember.computed.alias('a'), 6),
-  j: allEqual(sum('a','b'), 8)
+  j: allEqual(sum('a','b'), 8),
+  k: allEqual('a', 'orange'),
+
+  //NOTE: GJ: this currently fails with an:
+  //            Uncaught Error: Brace expanded properties cannot contain spaces, e.g. `user.{firstName, lastName}` should be `user.{firstName,lastName}`
+  l: allEqual('a', 'orange squash')
 });
 
 var myObj = MyType.create({
@@ -58,4 +63,14 @@ test('handles composable CPMs', function () {
   equal(myObj.get('j'), true);
   myObj.set('b', 4);
   equal(myObj.get('j'), false);
+});
+
+test('handles comparing literal values with values from computed properties', function() {
+  equal(myObj.get('k'), false);
+  myObj.set('a', 'orange');
+  equal(myObj.get('k'), true);
+
+  equal(myObj.get('l'), false);
+  myObj.set('a', 'orange squash');
+  equal(myObj.get('l'), true);
 });
